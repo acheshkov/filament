@@ -439,7 +439,8 @@ static bool processBufferField(filament::BufferInterfaceBlock::Builder& builder,
     auto typeString = typeValue->toJsonString()->getString();
     auto nameString = nameValue->toJsonString()->getString();
 
-    size_t arraySize = extractArraySize(typeString);
+    int32_t arraySizeRaw = extractArraySize(typeString);
+    size_t arraySize = static_cast<size_t>(arraySizeRaw);
 
     if (Enums::isValid<UniformType>(typeString)) {
         MaterialBuilder::UniformType type = Enums::toEnum<UniformType>(typeString);
@@ -448,7 +449,7 @@ static bool processBufferField(filament::BufferInterfaceBlock::Builder& builder,
             precision = Enums::toEnum<ParameterPrecision>(
                     precisionValue->toJsonString()->getString());
         }
-        if (arraySize == -1) {
+        if (arraySizeRaw == -1) {
             builder.addVariableSizedArray({
                 { nameString.data(), nameString.size() }, 0, type, precision });
         } else {
@@ -463,6 +464,7 @@ static bool processBufferField(filament::BufferInterfaceBlock::Builder& builder,
 
     return true;
 }
+
 
 static bool processBuffer(MaterialBuilder& builder,
         const JsonishObject& jsonObject) noexcept {
