@@ -1325,18 +1325,18 @@ void VulkanDriver::generateMipmaps(Handle<HwTexture> th) {
         layerCount *= 6;
     }
 
-    assert_invariant(layerCount < 1 << (sizeof(VulkanAttachment::layerCount) * 8));
+    assert_invariant(static_cast<uint32_t>(layerCount) < 1 << (sizeof(VulkanAttachment::layerCount) * 8));
 
     // FIXME: the loop below can perform many layout transitions and back. We should be
     //        able to optimize that.
     uint8_t level = 0;
-    int32_t srcw = int32_t(t->width);
-    int32_t srch = int32_t(t->height);
+    uint32_t srcw = t->width;
+    uint32_t srch = t->height;
     do {
-        int32_t const dstw = std::max(srcw >> 1, 1);
-        int32_t const dsth = std::max(srch >> 1, 1);
-        const VkOffset3D srcOffsets[2] = {{ 0, 0, 0 }, { srcw, srch, 1 }};
-        const VkOffset3D dstOffsets[2] = {{ 0, 0, 0 }, { dstw, dsth, 1 }};
+        uint32_t const dstw = std::max(srcw >> 1, 1u);
+        uint32_t const dsth = std::max(srch >> 1, 1u);
+        const VkOffset3D srcOffsets[2] = {{ 0, 0, 0 }, { static_cast<int32_t>(srcw), static_cast<int32_t>(srch), 1 }};
+        const VkOffset3D dstOffsets[2] = {{ 0, 0, 0 }, { static_cast<int32_t>(dstw), static_cast<int32_t>(dsth), 1 }};
 
         // TODO: there should be a way to do this using layerCount in vkBlitImage
         // TODO: vkBlitImage should be able to handle 3D textures too
@@ -1358,6 +1358,7 @@ void VulkanDriver::generateMipmaps(Handle<HwTexture> th) {
         srch = dsth;
     } while ((srcw > 1 || srch > 1) && ++level < t->levels - 1);
 }
+
 
 void VulkanDriver::compilePrograms(CompilerPriorityQueue priority,
         CallbackHandler* handler, CallbackHandler::Callback callback, void* user) {
