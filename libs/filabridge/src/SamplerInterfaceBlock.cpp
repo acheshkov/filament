@@ -111,7 +111,7 @@ CString SamplerInterfaceBlock::generateUniformName(const char* group, const char
     char* const prefix = std::copy_n(group,
             std::min(sizeof(uniformName) / 2, strlen(group)), uniformName);
     if (uniformName[0] >= 'A' && uniformName[0] <= 'Z') {
-        uniformName[0] |= 0x20; // poor man's tolower()
+        uniformName[0] = static_cast<char>(std::tolower(static_cast<unsigned char>(uniformName[0])));
     }
     *prefix = '_';
 
@@ -123,6 +123,7 @@ CString SamplerInterfaceBlock::generateUniformName(const char* group, const char
 
     return CString{ uniformName, size_t(last - uniformName) - 1u };
 }
+
 
 SamplerInterfaceBlock::SamplerInfoList SamplerInterfaceBlock::filterSamplerList(
         SamplerInfoList list, backend::DescriptorSetLayout const& descriptorSetLayout) {
