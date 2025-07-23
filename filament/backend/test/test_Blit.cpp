@@ -462,8 +462,8 @@ TEST_F(BlitTest, BlitRegion) {
             mCleanup.add(api.createRenderTarget(TargetBufferFlags::COLOR, srcRect.width,
                     srcRect.height, 1, 0, { srcTexture, kSrcLevel, 0 }, {}, {}));
     Handle<HwRenderTarget> dstRenderTarget =
-            mCleanup.add(api.createRenderTarget(TargetBufferFlags::COLOR, kDstTexWidth >> kDstLevel,
-                    kDstTexHeight >> kDstLevel, 1, 0, { dstTexture, kDstLevel, 0 }, {}, {}));
+            mCleanup.add(api.createRenderTarget(TargetBufferFlags::COLOR, static_cast<uint32_t>(kDstTexWidth) >> kDstLevel,
+                    static_cast<uint32_t>(kDstTexHeight) >> kDstLevel, 1, 0, { dstTexture, kDstLevel, 0 }, {}, {}));
 
     api.blitDEPRECATED(TargetBufferFlags::COLOR0, dstRenderTarget, dstRect, srcRenderTarget,
             srcRect,
@@ -484,6 +484,7 @@ TEST_F(BlitTest, BlitRegion) {
         api.commit(swapChain);
     }
 }
+
 
 TEST_F(BlitTest, BlitRegionToSwapChain) {
     FAIL_IF(Backend::VULKAN, "Crashes due to not finding color attachment, see b/417481493");
